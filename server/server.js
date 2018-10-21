@@ -19,6 +19,7 @@ const bodyParser = require('body-parser');
 var {ObjectId} =  require('mongodb');
 
 var {mongoose} = require('./db/mongoose');
+mongoose.plugin(schema => { schema.options.usePushEach = true });
 var {Todo} = require('./models/todo');
 var {Users} = require('./models/user');
 
@@ -111,18 +112,19 @@ app.patch('/todos/:id',(req,res) =>{
 })
 
 
-app.post('/users',(req,res)=>{
+app.post('/users',(req, res)=>{
   var body = _.pick(req.body,['email','password']);
-  var users = new Users(body);
+  var user = new Users(body);
 
-  users.save().then((doc) => {
-    res.send(doc);
-  },(e)=>{
+  user.save().then(function() {
+    return user.generateAuthToken();
+  }).then((token)=>{
+    res.header('x-auth',token).send(user);
+  }).catch((e) =>{
     res.status(400).send(e);
-  });
+    console.log(e);
+  })
 });
-
-
 
 app.listen(Port,()=>{
   console.log('Started on port 3000');

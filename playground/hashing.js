@@ -1,19 +1,46 @@
 const {SHA256} = require('crypto-js');
 const  jwt  =  require('jsonwebtoken');
+const mongoose = require('mongoose');
 
-var data = {
-  id:10
-}
-
-var token = jwt.sign(data, '123abc');
-console.log('New Hash with secret: '+token);
-
-var decoded =  jwt.verify(token, '123abc=');
-console.log('Decoded Data: ', decoded);
+const validator = require('validator');
+//const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
 
+var UserSchema = new mongoose.Schema({
+  email:{
+    type:String,
+    required : true,
+    trim: true,
+    minlength: 1,
+    unique:true,
+    validate: {
+      validator: validator.isEmail,
+      message : '{VALUE} is not a valid email'
+    }
+  },
+  password:{
+    type: String,
+    require: true,
+    minlength: 6
+  },
+  tokens: [{
+    access: {
+      type: String,
+      required: true
+    },
+    token: {
+      type: String,
+      required: true
+    }
+  }],
+},{
+  usePushEach: true
+});
 
 
+UserSchema.tokens.push({access, token});
+console.log(UserSchema);
 
 
 
