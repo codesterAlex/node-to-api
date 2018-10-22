@@ -7,7 +7,7 @@ if(env === 'development')
 process.env.PORT = 3000;
 process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoApp';
 }
-else if(env=== "test")
+else if(env=== 'test')
 {
   process.env.PORT = 3000;
   process.env.MONGODB_URI = 'mongodb://localhost:27017/TodoAppTest';
@@ -22,6 +22,11 @@ var {mongoose} = require('./db/mongoose');
 mongoose.plugin(schema => { schema.options.usePushEach = true });
 var {Todo} = require('./models/todo');
 var {Users} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
+
+
+
+
 
 var app = express();
 const Port= process.env.PORT;
@@ -125,6 +130,10 @@ app.post('/users',(req, res)=>{
     console.log(e);
   })
 });
+
+app.get('/users/me',authenticate,(req,res)=>{
+  res.send(req.user);
+})
 
 app.listen(Port,()=>{
   console.log('Started on port 3000');
