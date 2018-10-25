@@ -63,6 +63,9 @@ app.get('/todos/:id', authenticate, (req, res) => {
   });
 });
 
+app.get("/",(req,res)=>{
+  res.send("<h1>Welcome to my rest api</h1>");
+});
 
 app.delete('/todos/:id', authenticate,(req, res) =>{
   var id  = req.params.id;
