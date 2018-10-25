@@ -51,12 +51,11 @@ UserSchema.methods.toJSON = function()
 UserSchema.methods.generateAuthToken = function(){
   var user =this;
   var access = 'auth';
-  var token = jwt.sign({_id:user._id.toHexString(), access},process.env.JWT_SECRET).toString();
+  var token = jwt.sign({_id:user._id['$oid'].toHexString(), access},process.env.JWT_SECRET).toString();
   user.tokens.unshift({access, token});
   //console.log(user);
   return user.save().then(()=>{
     return token;
-
   });
 
 };
